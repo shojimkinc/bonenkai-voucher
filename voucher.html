@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>当選証</title>
+<style>
+:root{--bg:#FFFFFF;--ink:#333333;--sub:#6B6B6B;--pale:#F3F5F8;--main:#1F4E79;--accent:#E8740C}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:"Noto Sans JP","Yu Gothic","Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;line-height:1.7;overflow-wrap:break-word;padding:24px 16px 40px}
+.num{font-family:"Segoe UI","Noto Sans JP",sans-serif;font-variant-numeric:tabular-nums}
+.wrap{max-width:480px;margin:0 auto}
+.event{font-size:14px;color:var(--sub)}
+h1{font-size:28px;font-weight:700;margin-top:4px}
+.card{background:var(--pale);border-radius:8px;padding:24px 20px;margin-top:20px}
+.rank{font-size:22px;font-weight:700;color:var(--main)}
+.prize{font-size:26px;font-weight:700;line-height:1.4;margin-top:2px}
+.no{margin-top:20px;font-size:88px;font-weight:700;line-height:1;color:var(--accent)}
+.no small{font-size:28px;margin-left:4px}
+.name{font-size:24px;font-weight:700;margin-top:8px}
+dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin-top:20px;font-size:15px}
+dt{color:var(--sub)}
+dd{font-weight:700}
+.code{font-size:20px;letter-spacing:.12em}
+.howto{margin-top:24px;font-size:15px;line-height:1.9}
+.howto b{color:var(--main)}
+.err{margin-top:24px;font-size:16px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="event">宮川工業 忘年会 2026</div>
+  <h1>当選証</h1>
+</div>
+<script>
+(() => {
+  const app = document.getElementById("app");
+  let r = "", p = "", n = "", w = "", t = "", c = "";
+  try {
+    const d = new URLSearchParams(location.hash.slice(1)).get("d");
+    const bin = atob(d.replace(/-/g, "+").replace(/_/g, "/"));
+    [r, p, n, w, t, c] = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, ch => ch.charCodeAt(0))));
+  } catch(e){}
+  const esc = s => String(s).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+  if (!p || !n){
+    app.insertAdjacentHTML("beforeend", `<p class="err">当選の情報が読み取れませんでした。会場の画面に出ているQRコードを、もう一度読み込んでください。</p>`);
+    return;
+  }
+  document.title = `当選証 ${r || ""} ${n}番`;
+  app.insertAdjacentHTML("beforeend", `
+    <div class="card">
+      <div class="rank">${esc(r || "")}</div>
+      <div class="prize">${esc(p)}</div>
+      <div class="no num">${esc(n)}<small>番</small></div>
+      ${w ? `<div class="name">${esc(w)} さん</div>` : ""}
+      <dl>
+        ${t ? `<dt>抽選日時</dt><dd class="num">${esc(t)}</dd>` : ""}
+        <dt>照合コード</dt><dd class="num code">${esc(c)}</dd>
+      </dl>
+    </div>
+    <div class="howto">
+      おめでとうございます！<br>
+      景品は後日、<b>総務で交換</b>します。交換のときにこの画面を見せてください。<br>
+      念のため、<b>この画面のスクリーンショット</b>を撮っておいてください。
+    </div>`);
+})();
+</script>
+</body>
+</html>
