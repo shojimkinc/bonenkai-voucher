@@ -20,6 +20,8 @@ h1{font-size:28px;font-weight:700;margin-top:4px}
 .no{margin-top:20px;font-size:88px;font-weight:700;line-height:1;color:var(--accent)}
 .no small{font-size:28px;margin-left:4px}
 .name{font-size:24px;font-weight:700;margin-top:8px}
+.winner{margin-top:20px;font-size:40px;font-weight:700;line-height:1.3;color:var(--accent);word-break:keep-all;overflow-wrap:break-word}
+.winner small{font-size:.5em;margin-left:4px}
 dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin-top:20px;font-size:15px}
 dt{color:var(--sub)}
 dd{font-weight:700}
@@ -75,14 +77,13 @@ dt .sub{font-size:14px}
     app.insertAdjacentHTML("beforeend", `<p class="err">当選の情報が読み取れませんでした。会場の画面に出ているQRコードを、もう一度読み込んでください。<br><br>Could not read the prize information. Please scan the QR code on the screen again.<br>ไม่สามารถอ่านข้อมูลรางวัลได้ กรุณาสแกน QR โค้ดบนจออีกครั้ง</p>`);
     return;
   }
-  document.title = `当選証 ${r || ""} ${n}番`;
+  document.title = `当選証 ${r || ""} ${w || n + "番"}`;
   app.insertAdjacentHTML("beforeend", `
     <div class="card">
       <div class="rank">${esc(r || "")}${rankTr(r) ? `<span class="tr">${esc(rankTr(r).join(" · "))}</span>` : ""}</div>
       <div class="prize">${esc(p)}</div>
       ${PRIZE_TR[p] ? `<div class="psub">${esc(PRIZE_TR[p].join(" ／ "))}</div>` : ""}
-      <div class="no num">${esc(n)}<small>番</small></div>
-      ${w ? `<div class="name">${esc(w)} さん</div>` : ""}
+      ${w ? `<div class="winner">${esc(w)}<small>さん</small></div>` : `<div class="no num">${esc(n)}<small>番</small></div>`}
       <dl>
         ${t ? `<dt>抽選日時<span class="sub">Drawn at · เวลาที่จับรางวัล</span></dt><dd class="num">${esc(t)}</dd>` : ""}
         <dt>照合コード<span class="sub">Code · รหัสยืนยัน</span></dt><dd class="num code">${esc(c)}</dd>
