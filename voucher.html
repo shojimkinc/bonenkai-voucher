@@ -9,7 +9,7 @@
 :root{--bg:#FFFFFF;--ink:#333333;--sub:#6B6B6B;--pale:#F3F5F8;--main:#1F4E79;--accent:#E8740C}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:var(--bg);color:var(--ink)}
-body{font-family:"Noto Sans JP","Yu Gothic","Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;line-height:1.7;overflow-wrap:break-word;padding:24px 16px 40px}
+body{font-family:"Noto Sans JP","Yu Gothic","Hiragino Kaku Gothic ProN","Segoe UI","Leelawadee UI","Noto Sans Thai",sans-serif;line-height:1.7;overflow-wrap:break-word;padding:24px 16px 40px}
 .num{font-family:"Segoe UI","Noto Sans JP",sans-serif;font-variant-numeric:tabular-nums}
 .wrap{max-width:480px;margin:0 auto}
 .event{font-size:14px;color:var(--sub)}
@@ -27,12 +27,17 @@ dd{font-weight:700}
 .howto{margin-top:24px;font-size:15px;line-height:1.9}
 .howto b{color:var(--main)}
 .err{margin-top:24px;font-size:16px}
+.tr{font-size:14px;font-weight:500;color:var(--sub);margin-left:8px}
+.psub{font-size:15px;color:var(--sub);line-height:1.5;margin-top:2px}
+.sub{display:block;font-size:.62em;font-weight:500;color:var(--sub);line-height:1.5}
+.howto p+p{margin-top:12px;color:var(--sub);font-size:15px;line-height:1.8}
+dt .sub{font-size:12px}
 </style>
 </head>
 <body>
 <div class="wrap" id="app">
   <div class="event">宮川工業 忘年会 2026</div>
-  <h1>当選証</h1>
+  <h1>当選証<span class="sub">Prize Certificate · ใบรับรางวัล</span></h1>
 </div>
 <script>
 (() => {
@@ -43,27 +48,52 @@ dd{font-weight:700}
     const bin = atob(d.replace(/-/g, "+").replace(/_/g, "/"));
     [r, p, n, w, t, c] = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, ch => ch.charCodeAt(0))));
   } catch(e){}
+  // 賞と既定の景品の英語・タイ語（抽選画面と同じ内容）
+  const PRIZE_TR = {
+    "うまい棒 詰め合わせ": ["Umaibo snack assortment", "ชุดขนมอุไมโบ"],
+    "充電式LEDランタン": ["Rechargeable LED lantern", "ตะเกียง LED แบบชาร์จได้"],
+    "コーヒー＆紅茶アソート": ["Coffee & tea assortment", "ชุดกาแฟและชา"],
+    "貝印 爪切り": ["KAI nail clipper", "กรรไกรตัดเล็บ KAI"],
+    "高級ボールペン（ジェットストリーム プライム）": ["Premium ballpoint pen (Jetstream Prime)", "ปากกาลูกลื่นพรีเมียม (Jetstream Prime)"],
+    "はちみつ食べ比べセット": ["Honey tasting set", "ชุดชิมน้ำผึ้ง"],
+    "鼻セレブ 12箱": ["Hana Celeb tissues, 12 boxes", "กระดาษทิชชู Hana Celeb 12 กล่อง"],
+    "真空断熱タンブラー ペア": ["Vacuum-insulated tumblers (pair)", "แก้วเก็บอุณหภูมิ 1 คู่"],
+    "リラックスセット（温熱アイマスク＋入浴剤）": ["Relaxation set (warming eye mask + bath salts)", "ชุดผ่อนคลาย (มาสก์ตาอุ่น + เกลือแช่ตัว)"],
+    "洗える電気ブランケット": ["Washable electric blanket", "ผ้าห่มไฟฟ้าซักได้"],
+    "防水Bluetoothスピーカー": ["Waterproof Bluetooth speaker", "ลำโพงบลูทูธกันน้ำ"],
+    "温熱ネックマッサージャー": ["Heated neck massager", "เครื่องนวดคอแบบอุ่น"]
+  };
+  const RANK_TR = {"特賞": ["Grand Prize", "รางวัลใหญ่"], "ブービー賞": ["Booby Prize", "รางวัลรองบ๊วย"], "飛び賞": ["Lucky Number Prize", "รางวัลเลขพิเศษ"], "社長賞": ["President's Prize", "รางวัลประธาน"]};
+  function rankTr(x){
+    x = (x || "").trim();
+    const m = x.match(/^(\d+)等$/);
+    if (m){ const k = +m[1], t = k % 100; const s = t >= 11 && t <= 13 ? "th" : ({1: "st", 2: "nd", 3: "rd"})[k % 10] || "th"; return [`${k}${s} Prize`, `รางวัลที่ ${k}`]; }
+    return RANK_TR[x] || null;
+  }
   const esc = s => String(s).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
   if (!p || !n){
-    app.insertAdjacentHTML("beforeend", `<p class="err">当選の情報が読み取れませんでした。会場の画面に出ているQRコードを、もう一度読み込んでください。</p>`);
+    app.insertAdjacentHTML("beforeend", `<p class="err">当選の情報が読み取れませんでした。会場の画面に出ているQRコードを、もう一度読み込んでください。<br><br>Could not read the prize information. Please scan the QR code on the screen again.<br>ไม่สามารถอ่านข้อมูลรางวัลได้ กรุณาสแกน QR โค้ดบนจออีกครั้ง</p>`);
     return;
   }
   document.title = `当選証 ${r || ""} ${n}番`;
   app.insertAdjacentHTML("beforeend", `
     <div class="card">
-      <div class="rank">${esc(r || "")}</div>
+      <div class="rank">${esc(r || "")}${rankTr(r) ? `<span class="tr">${esc(rankTr(r).join(" · "))}</span>` : ""}</div>
       <div class="prize">${esc(p)}</div>
+      ${PRIZE_TR[p] ? `<div class="psub">${esc(PRIZE_TR[p].join(" ／ "))}</div>` : ""}
       <div class="no num">${esc(n)}<small>番</small></div>
       ${w ? `<div class="name">${esc(w)} さん</div>` : ""}
       <dl>
-        ${t ? `<dt>抽選日時</dt><dd class="num">${esc(t)}</dd>` : ""}
-        <dt>照合コード</dt><dd class="num code">${esc(c)}</dd>
+        ${t ? `<dt>抽選日時<span class="sub">Drawn at · เวลาที่จับรางวัล</span></dt><dd class="num">${esc(t)}</dd>` : ""}
+        <dt>照合コード<span class="sub">Code · รหัสยืนยัน</span></dt><dd class="num code">${esc(c)}</dd>
       </dl>
     </div>
     <div class="howto">
-      おめでとうございます！<br>
+      <p>おめでとうございます！<br>
       景品は後日、<b>総務で交換</b>します。交換のときにこの画面を見せてください。<br>
-      念のため、<b>この画面のスクリーンショット</b>を撮っておいてください。
+      念のため、<b>この画面のスクリーンショット</b>を撮っておいてください。</p>
+      <p>Congratulations! You can receive your prize later at the General Affairs section. Please show this screen when you collect it, and take a screenshot just in case.</p>
+      <p>ยินดีด้วย! สามารถรับของรางวัลได้ภายหลังที่ฝ่ายธุรการ กรุณาแสดงหน้าจอนี้ตอนรับรางวัล และแคปหน้าจอนี้เก็บไว้ด้วย</p>
     </div>`);
 })();
 </script>
