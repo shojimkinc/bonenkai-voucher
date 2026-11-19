@@ -32,6 +32,7 @@ dd{font-weight:700}
 .howto b{color:var(--main)}
 .err{margin-top:24px;font-size:16px}
 .tr{font-size:17px;font-weight:500;color:var(--ink);margin-left:8px}
+.photo{display:block;width:100%;max-height:260px;object-fit:contain;background:#FFFFFF;border-radius:6px;margin:4px 0 16px}
 .psub{font-size:19px;color:var(--ink);line-height:1.5;margin-top:4px}
 .sub{display:block;font-size:.7em;font-weight:500;color:var(--sub);line-height:1.5}
 .howto p+p{margin-top:12px;color:var(--ink);font-size:16px;line-height:1.8}
@@ -54,18 +55,45 @@ dt .sub{font-size:14px}
   } catch(e){}
   // 賞と既定の景品の英語・タイ語（抽選画面と同じ内容）
   const PRIZE_TR = {
-    "うまい棒 詰め合わせ": ["Umaibo snack assortment", "ชุดขนมอุไมโบ"],
-    "充電式LEDランタン": ["Rechargeable LED lantern", "ตะเกียง LED แบบชาร์จได้"],
-    "コーヒー＆紅茶アソート": ["Coffee & tea assortment", "ชุดกาแฟและชา"],
-    "貝印 爪切り": ["KAI nail clipper", "กรรไกรตัดเล็บ KAI"],
-    "高級ボールペン（ジェットストリーム プライム）": ["Premium ballpoint pen (Jetstream Prime)", "ปากกาลูกลื่นพรีเมียม (Jetstream Prime)"],
-    "はちみつ食べ比べセット": ["Honey tasting set", "ชุดชิมน้ำผึ้ง"],
-    "鼻セレブ 12箱": ["Hana Celeb tissues, 12 boxes", "กระดาษทิชชู Hana Celeb 12 กล่อง"],
-    "真空断熱タンブラー ペア": ["Vacuum-insulated tumblers (pair)", "แก้วเก็บอุณหภูมิ 1 คู่"],
-    "リラックスセット（温熱アイマスク＋入浴剤）": ["Relaxation set (warming eye mask + bath salts)", "ชุดผ่อนคลาย (มาสก์ตาอุ่น + เกลือแช่ตัว)"],
-    "洗える電気ブランケット": ["Washable electric blanket", "ผ้าห่มไฟฟ้าซักได้"],
-    "防水Bluetoothスピーカー": ["Waterproof Bluetooth speaker", "ลำโพงบลูทูธกันน้ำ"],
-    "温熱ネックマッサージャー": ["Heated neck massager", "เครื่องนวดคอแบบอุ่น"]
+    "クノール カップスープ 24食": ["Knorr cup soup (24 servings)", "ซุปถ้วย Knorr 24 ซอง"],
+    "洗剤ギフトセット（アリエール＆ジョイ）": ["Detergent gift set (Ariel & Joy)", "ชุดของขวัญผงซักฟอก (Ariel & Joy)"],
+    "充電式カイロ": ["Rechargeable hand warmer", "เครื่องอุ่นมือแบบชาร์จได้"],
+    "ロイズ バトンクッキー": ["ROYCE' baton cookies", "คุกกี้ ROYCE'"],
+    "LAMY ボールペン（ジェットストリーム）": ["LAMY ballpoint pen (Jetstream inside)", "ปากกาลูกลื่น LAMY (ไส้ Jetstream)"],
+    "ヨックモック シガール 30本": ["YOKU MOKU Cigare cookies (30)", "คุกกี้ YOKU MOKU Cigare 30 ชิ้น"],
+    "サーモス 水筒 500ml": ["THERMOS vacuum bottle (500 ml)", "กระติกน้ำสุญญากาศ THERMOS 500 มล."],
+    "充電式湯たんぽ": ["Rechargeable hot water bottle", "กระเป๋าน้ำร้อนแบบชาร์จได้"],
+    "はちみつ食べ比べ 6種": ["Japanese honey tasting set (6 kinds)", "ชุดชิมน้ำผึ้งญี่ปุ่น 6 ชนิด"],
+    "モバイルバッテリー（Anker）": ["Anker power bank", "พาวเวอร์แบงก์ Anker"],
+    "スチーム式加湿器": ["Steam humidifier", "เครื่องเพิ่มความชื้นแบบไอน้ำ"],
+    "でかランタン（パナソニック）": ["Panasonic large LED lantern", "ตะเกียง LED ขนาดใหญ่ Panasonic"],
+    "スマートバンド（Xiaomi）": ["Xiaomi Smart Band", "สมาร์ทแบนด์ Xiaomi"],
+    "洗える電気毛布": ["Washable electric blanket", "ผ้าห่มไฟฟ้าซักได้"],
+    "魚沼産コシヒカリ 5kg": ["Uonuma Koshihikari rice (5 kg)", "ข้าวโคชิฮิคาริ อุโอนุมะ 5 กก."],
+    "セラミックファンヒーター": ["Ceramic fan heater", "พัดลมทำความร้อนเซรามิก"],
+    "BRUNO ホットプレート": ["BRUNO compact hot plate", "เตาไฟฟ้า BRUNO"],
+    "ふとん乾燥機（アイリスオーヤマ）": ["Futon dryer (IRIS OHYAMA)", "เครื่องอบฟูก IRIS OHYAMA"]
+  };
+  // 景品の写真（Amazon の商品写真を表示するだけ。このページには写真を置かない）
+  const PRIZE_IMG = {
+    "クノール カップスープ 24食": "81oFWDmiGTL._AC_SL1200_",
+    "洗剤ギフトセット（アリエール＆ジョイ）": "61NDwtvn24L._AC_SL1000_",
+    "充電式カイロ": "51gCNFM%2BS2L._AC_SL1500_",
+    "ロイズ バトンクッキー": "710M-lXk9wL._AC_SL1500_",
+    "LAMY ボールペン（ジェットストリーム）": "515WI8ZcP4L._AC_SL1500_",
+    "ヨックモック シガール 30本": "61BYvtdleTL._AC_SL1000_",
+    "サーモス 水筒 500ml": "41akLAS8YrL._AC_SL1500_",
+    "充電式湯たんぽ": "71vMrIcwXrL._AC_SL1500_",
+    "はちみつ食べ比べ 6種": "71iu4h0WE1L._AC_SL1500_",
+    "モバイルバッテリー（Anker）": "61SeOo7fuvL._AC_SL1500_",
+    "スチーム式加湿器": "41JZhAUY6TL._AC_SL1000_",
+    "でかランタン（パナソニック）": "61qOJrN7gQL._AC_SL1500_",
+    "スマートバンド（Xiaomi）": "61CLwZfr%2BYL._AC_SL1500_",
+    "洗える電気毛布": "71Y1deYUTQL._AC_SL1500_",
+    "魚沼産コシヒカリ 5kg": "71MwP8IRTsL._AC_SL1500_",
+    "セラミックファンヒーター": "41QNdnxBrNL._AC_SL1000_",
+    "BRUNO ホットプレート": "612XVAwKtTL._AC_SL1500_",
+    "ふとん乾燥機（アイリスオーヤマ）": "514iFE5DfVL._AC_SL1000_"
   };
   const RANK_TR = {"特賞": ["Grand Prize", "รางวัลใหญ่"], "ブービー賞": ["Booby Prize", "รางวัลรองบ๊วย"], "飛び賞": ["Lucky Number Prize", "รางวัลเลขพิเศษ"], "社長賞": ["President's Prize", "รางวัลประธาน"]};
   function rankTr(x){
@@ -82,6 +110,7 @@ dt .sub{font-size:14px}
   document.title = `当選証 ${r || ""} No.${n}${w ? " " + w : ""}`;
   app.insertAdjacentHTML("beforeend", `
     <div class="card">
+      ${PRIZE_IMG[p] ? `<img class="photo" src="https://m.media-amazon.com/images/I/${PRIZE_IMG[p]}.jpg" alt="${esc(p)}" onerror="this.remove()">` : ""}
       <div class="rank">${esc(r || "")}${rankTr(r) ? `<span class="tr">${esc(rankTr(r).join(" · "))}</span>` : ""}</div>
       <div class="prize">${esc(p)}</div>
       ${PRIZE_TR[p] ? `<div class="psub">${esc(PRIZE_TR[p].join(" ／ "))}</div>` : ""}
